@@ -13,6 +13,16 @@ command! -nargs=* FocusCompareLines  call <SID>PreTreatmentFunction("CompareFocu
 
 command! XL call <SID>RestoreAfterCompare()
 
+function s:get_line_number_or_relatively(str)
+	if a:str[0] == "+"
+		return line(".") + str2nr(a:str[1:])
+	elseif a:str[0] == "-"
+		return line(".") - str2nr(a:str[1:])
+	else
+		return str2nr(a:str)
+	endif
+endfunction
+
 " This function is called to
 " - get the line numbers
 " - check their existence in the buffer
@@ -25,10 +35,10 @@ function! s:PreTreatmentFunction(function, ...)
         let l2=line(".")+1
     elseif len(a:000) == 1
         let l1 =line(".")
-        let l2 =str2nr(a:1)
+		let l2 =s:get_line_number_or_relatively(a:1)
     elseif len(a:000) == 2
-        let l1 = str2nr(a:1)
-        let l2 = str2nr(a:2)
+        let l1 = s:get_line_number_or_relatively(a:1)
+        let l2 = s:get_line_number_or_relatively(a:2)
     else
         echom "Bad number of arguments"
         return
